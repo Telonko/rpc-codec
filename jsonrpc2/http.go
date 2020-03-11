@@ -3,7 +3,7 @@ package jsonrpc2
 import (
 	"bytes"
 	"context"
-	"encoding/json"
+	json "github.com/intel-go/fastjson"
 	"fmt"
 	"io"
 	"io/ioutil"

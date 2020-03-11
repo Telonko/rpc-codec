@@ -7,7 +7,7 @@ package jsonrpc2
 
 import (
 	"context"
-	"encoding/json"
+	json "github.com/intel-go/fastjson"
 	"errors"
 	"io"
 	"net/rpc"
@@ -75,7 +75,7 @@ func NewServerCodecContext(ctx context.Context, conn io.ReadWriteCloser, srv *rp
 }
 
 type serverRequest struct {
-	Version string           `json:"jsonrpc"`
+	Version string           `json:"-"`
 	Method  string           `json:"method"`
 	Params  *json.RawMessage `json:"params"`
 	ID      *json.RawMessage `json:"id"`
@@ -99,15 +99,12 @@ func (r *serverRequest) UnmarshalJSON(raw []byte) error {
 	if err := json.Unmarshal(raw, &o); err != nil {
 		return errors.New("bad request")
 	}
-	if o["jsonrpc"] == nil || o["method"] == nil {
+	if o["method"] == nil {
 		return errors.New("bad request")
 	}
 	_, okID := o["id"]
 	_, okParams := o["params"]
-	if len(o) == 3 && !(okID || okParams) || len(o) == 4 && !(okID && okParams) || len(o) > 4 {
-		return errors.New("bad request")
-	}
-	if r.Version != protoVer {
+	if len(o) == 4 && !(okID || okParams) || len(o) == 5 && !(okID && okParams) || len(o) > 5 {
 		return errors.New("bad request")
 	}
 	if okParams {
@@ -137,7 +134,7 @@ func (r *serverRequest) UnmarshalJSON(raw []byte) error {
 }
 
 type serverResponse struct {
-	Version string           `json:"jsonrpc"`
+	Version string           `json:"-"`
 	ID      *json.RawMessage `json:"id"`
 	Result  interface{}      `json:"result,omitempty"`
 	Error   interface{}      `json:"error,omitempty"`

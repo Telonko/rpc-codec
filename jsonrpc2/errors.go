@@ -1,7 +1,7 @@
 package jsonrpc2
 
 import (
-	"encoding/json"
+	json "github.com/intel-go/fastjson"
 	"fmt"
 	"strings"
 )
