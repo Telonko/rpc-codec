@@ -10,6 +10,7 @@ import (
 	json "github.com/intel-go/fastjson"
 	"errors"
 	"io"
+	"log"
 	"net/rpc"
 	"sync"
 )
@@ -197,13 +198,15 @@ func (c *serverCodec) ReadRequestBody(x interface{}) error {
 		arg := x.(*BatchArg)
 		arg.srv = c.srv
 		if err := json.Unmarshal(*c.req.Params, &arg.reqs); err != nil {
-			return NewError(errParams.Code, err.Error())
+			log.Println(c.req.Method, string(*c.req.Params), err)
+			return NewError(errParams.Code, "something went wrong")
 		}
 		if len(arg.reqs) == 0 {
 			return errRequest
 		}
 	} else if err := json.Unmarshal(*c.req.Params, x); err != nil {
-		return NewError(errParams.Code, err.Error())
+		log.Println(c.req.Method, string(*c.req.Params), err)
+		return NewError(errParams.Code, "something went wrong")
 	}
 	return nil
 }
