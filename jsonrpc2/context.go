@@ -21,6 +21,9 @@ type Ctx struct {
 
 // Context returns ctx given to preceding SetContext call.
 func (c *Ctx) Context() context.Context {
+	if c.ctx == nil {
+		return context.Background()
+	}
 	return c.ctx
 }
 
