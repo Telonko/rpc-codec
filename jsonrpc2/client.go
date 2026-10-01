@@ -6,7 +6,7 @@
 package jsonrpc2
 
 import (
-	json "github.com/intel-go/fastjson"
+	"encoding/json"
 	"errors"
 	"io"
 	"math"
@@ -121,8 +121,8 @@ func (r *clientResponse) reset() {
 
 func (r *clientResponse) UnmarshalJSON(raw []byte) error {
 	r.reset()
-	type resp *clientResponse
-	if err := json.Unmarshal(raw, resp(r)); err != nil {
+	type resp clientResponse
+	if err := json.Unmarshal(raw, (*resp)(r)); err != nil {
 		return errors.New("bad response: " + string(raw))
 	}
 
